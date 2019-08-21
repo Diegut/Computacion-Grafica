@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>ejes</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<p> Diego Gutierrez
+		</p>
+		<script src="js/three.js"></script>
+		<script>
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			camera.position.z=7;
+			camera.position.x=7;
+			camera.position.y=7;
+			camera.lookAt(0,0,0);
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			
+			var dir = new THREE.Vector3( 3, 0, 0 );
+			dir.normalize();
+
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var length = 2;
+			var hex = 0xff0000;
+			var arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex, 0.5, 0.5 );
+			scene.add( arrowHelper );
+			var dir = new THREE.Vector3( 0, 3, 0 );
+			dir.normalize();
+			var hex = 0x00ff00;
+			var arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex, 0.5, 0.5 );
+			scene.add( arrowHelper );
+			var dir = new THREE.Vector3( 0, 0, 3 );
+			dir.normalize();
+			var hex = 0x0000ff;
+			var arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex, 0.5, 0.5 );
+			scene.add( arrowHelper );
+			
+			var axesHelper = new THREE.AxesHelper( 3 );
+			scene.add( axesHelper );
+		    
+			/*var plane = new THREE.Plane( new THREE.Vector3( 0, 0, 0 ), 0 );
+			var helper = new THREE.PlaneHelper( plane, 5, 0x990000 );
+			scene.add( helper );*/
+			var plane = new THREE.Plane( new THREE.Vector3( 0, 1, 0 ), 0 );
+			var helper = new THREE.PlaneHelper( plane, 500, 0xf0f0f0 );
+			scene.add( helper );
+			/*
+			var plane = new THREE.Plane( new THREE.Vector3( 1, 0, 0 ), 0 );
+			var helper = new THREE.PlaneHelper( plane, 5, 0x000099 );
+			scene.add( helper );
+
+			*/
+			var pi=3.1416;
+			//p=78;
+			var p=78;
+			var bandera=0;
+			for(var h=0;h<=250;h++){
+
+
+			for(var j=0;j<=3;j++){
+			var geometry=new THREE.Geometry();
+			for(var i=0.0;i<p;i=3+i){
+				if(h%10==0){
+					bandera=1;
+					var material=new THREE.PointsMaterial({ color: 0xf0f0ff, size:0.1});
+				}
+				else{
+					bandera=0;
+					var material=new THREE.PointsMaterial({ color: 0xa0a0ff, size:0.1});
+				}
+				if(j==0){
+				var pared=new THREE.Vector3();
+				pared.x=7+(0.5*bandera+20-h*0.07)*(Math.cos(THREE.Math.degToRad(i+112+(h*0.15))));
+				pared.y=h;
+				pared.z=-6+(0.5*bandera+20-h*0.07)*(Math.sin(THREE.Math.degToRad(i+112+(h*0.15))));
+				geometry.vertices.push(pared);
+				};
+				if(j==1){
+				var pared=new THREE.Vector3();
+				pared.x=-7+(0.5*bandera+20-h*0.07)*(Math.cos(THREE.Math.degToRad(i-8+(h*0.15))));
+				pared.y=h;
+				pared.z=-6+(0.5*bandera+20-h*0.07)*(Math.sin(THREE.Math.degToRad(i-8+(h*0.15))));
+				geometry.vertices.push(pared);
+				};
+				if(j==3){
+				var pared=new THREE.Vector3();
+				pared.x=(0.5*bandera+20-h*0.07)*(Math.cos(THREE.Math.degToRad(i+232+(h*0.15))));
+				pared.y=h;
+				pared.z=6.5+(0.5*bandera+20-h*0.07)*(Math.sin(THREE.Math.degToRad(i+232+(h*0.15))));
+				geometry.vertices.push(pared);
+				};
+			};
+			
+			if(h==250){
+				p=38;
+				var geometry=new THREE.Geometry();
+				for(var j=0;j<5;j++){
+				for(var i=0;i<p;i=i+3){
+					var pared=new THREE.Vector3();
+				pared.x=(-0.9*j+20-h*0.05)*(Math.cos(THREE.Math.degToRad(i+232+(h*0.15))));
+				pared.y=h-1;
+				pared.z=6.5+(-0.9*j+20-h*0.05)*(Math.sin(THREE.Math.degToRad(i+232+(h*0.15))));
+				geometry.vertices.push(pared);
+				var pared=new THREE.Vector3();
+				pared.x=-7+(-0.9*j+20-h*0.05)*(Math.cos(THREE.Math.degToRad(i-8+(h*0.15))));
+				pared.y=h-1;
+				pared.z=-6+(-0.9*j+20-h*0.05)*(Math.sin(THREE.Math.degToRad(i-8+(h*0.15))));
+				geometry.vertices.push(pared);
+				var pared=new THREE.Vector3();
+				pared.x=7+(-0.9*j+20-h*0.05)*(Math.cos(THREE.Math.degToRad(i+112+(h*0.15))));
+				pared.y=h-1;
+				pared.z=-6+(-0.9*j+20-h*0.05)*(Math.sin(THREE.Math.degToRad(i+112+(h*0.15))));
+				geometry.vertices.push(pared);
+				}
+				p=p-2.7;
+				for(var i=0;i<=360;i=i+10){ 
+				var geometry=new THREE.Geometry();
+				var material=new THREE.PointsMaterial({ color: 0xf0f0ff, size:0.1});
+				if(j==4){
+				var material=new THREE.PointsMaterial({ color: 0xffa0a0, size:0.1});
+				}
+				var pared=new THREE.Vector3();
+				pared.x=0.2*(Math.cos(THREE.Math.degToRad(i)));
+				pared.y=h+j*0.4;
+				pared.z=0.2*(Math.sin(THREE.Math.degToRad(i)))-2;
+				geometry.vertices.push(pared);
+				var circle1=new THREE.Points(geometry, material);
+			    scene.add(circle1);
+				}
+			}
+			}
+
+			var circle1=new THREE.Points(geometry, material);
+			//circle1.rotateX(3*pi/2);
+			scene.add(circle1);
+			};
+			p=p-0.28;
+			};
+
+			var l=195;
+			for(var i=0;i<=2;i++){
+
+				for(var j=0;j<=l;j=j+4){
+				if(j<64||j>125){ 
+				var geometry=new THREE.Geometry();
+				if(i%10==0){
+					var material=new THREE.PointsMaterial({color: 0xfff0ff, size:0.1});
+				}
+				else{
+					var material=new THREE.PointsMaterial({color: 0xffa0ff, size:0.1});
+				}
+				
+
+
+				var pared=new THREE.Vector3();
+				pared.x=7+(20.5-i*0.3)*(Math.cos(THREE.Math.degToRad(j+55)));
+				pared.y=i;
+				pared.z=-6+(20.5-i*0.3)*(Math.sin(THREE.Math.degToRad(j+55)));
+				geometry.vertices.push(pared);
+				var circle2=new THREE.Points(geometry,material);
+				scene.add(circle2);
+				
+				
+				var geometry=new THREE.Geometry();
+				
+				var pared=new THREE.Vector3();
+				pared.x=-7+(20.5-i*0.3)*(Math.cos(THREE.Math.degToRad(j-65)));
+				pared.y=i;
+				pared.z=-6+(20.5-i*0.3)*(Math.sin(THREE.Math.degToRad(j-65)));
+				geometry.vertices.push(pared);
+				var circle2=new THREE.Points(geometry,material);
+				scene.add(circle2);
+				
+
+				var geometry=new THREE.Geometry();
+				
+				var pared=new THREE.Vector3();
+				pared.x=(20.5-i*0.3)*(Math.cos(THREE.Math.degToRad(j+176)));
+				pared.y=i;
+				pared.z=6.5+(20.5-i*0.3)*(Math.sin(THREE.Math.degToRad(j+176)));
+				geometry.vertices.push(pared);
+				var circle2=new THREE.Points(geometry,material);
+				
+				scene.add(circle2);
+
+			}
+				}
+			l=l-0.1;
+
+			}
+
+
+			var a =1
+			var XCam=0;
+			var YCam=0;
+			var Zcam=0;
+			var theta=0;
+			var Sigma=0;
+			camera.position.x=0;
+			camera.position.y=0;
+			var animate = function () {
+			requestAnimationFrame( animate );
+			/*circular
+			XCam=110*(Math.cos(THREE.Math.degToRad(theta)));
+			yCam=110*(Math.sin(THREE.Math.degToRad(theta)));
+			camera.position.x=XCam;
+			camera.position.y=180;
+			camera.position.z=yCam;
+			camera.lookAt(0,50,0);
+			theta=0.1+theta;
+			*/
+			
+			//cono
+			XCam=Zcam*(Math.cos(THREE.Math.degToRad(theta)));
+			yCam=Zcam*(Math.sin(THREE.Math.degToRad(theta)));
+			camera.position.x=XCam;
+			camera.position.y=Zcam;
+			camera.position.z=yCam;
+			if(Zcam>=310){
+				Zcam=Zcam-0.01;
+			}
+			else{
+			Zcam=0.09+Zcam;			
+			};
+			camera.lookAt(0,0,0);
+			theta=0.5+theta;
+			
+			
+			/* esfera 
+			XCam=5*(Math.cos(THREE.Math.degToRad(theta)))*(Math.sin(THREE.Math.degToRad(Sigma)));
+			yCam=5*(Math.sin(THREE.Math.degToRad(theta)))*(Math.sin(THREE.Math.degToRad(Sigma)));
+			Zcam=5*(Math.cos(THREE.Math.degToRad(Sigma)));
+			camera.position.x=XCam;
+			camera.position.y=Zcam;
+			camera.position.z=yCam;
+			camera.lookAt(0,0,0);
+			theta=0.4+theta;
+			Sigma=0.4+Sigma;
+			*/
+			renderer.render(scene,camera);
+			};
+			animate();
+			renderer.render(scene,camera);
+		</script>
+	</body>
+</html>
