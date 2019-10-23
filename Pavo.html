@@ -1,0 +1,190 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>Bezier Curve</title>
+    <style>
+      html, body { margin: 0; padding: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <script src="js/three.min.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+    <script src="js/THREE.CSG.js"></script>
+    <script>
+		var scene, aspect, camera, renderer, controls;
+		var startTime = Date.now();
+		init();
+		animate();
+	
+		function init(){
+			//INICIALIZACIÓN DE LA ESCENA
+			scene = new THREE.Scene();
+            scene.background = new THREE.Color( 0xAAAAAA );
+			aspect = window.innerWidth / window.innerHeight;
+			camera = new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000);
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+            controls = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			//ELEMENTOS DE ESCENA
+			var size = 10;
+			var arrowSize = 1;
+			var divisions = size;
+			var origin = new THREE.Vector3( 0, 0, 0 );
+			var x = new THREE.Vector3( 1, 0, 0 );
+			var y = new THREE.Vector3( 0, 1, 0 );
+		  	var z = new THREE.Vector3( 0, 0, 1 );
+			var color1 = new THREE.Color( 0xFFFFFF );
+		  	var color2 = new THREE.Color( 0x333333 );
+		  	var colorR = new THREE.Color( 0xAA3333 );
+		  	var colorG = new THREE.Color( 0x33AA33 );
+		  	var colorB = new THREE.Color( 0x333366 );
+			var colorRd = new THREE.Color( 0xAA6666 );
+		  	var colorGd = new THREE.Color( 0x66AA66 );
+		  	var colorBd = new THREE.Color( 0x6666AA );
+		  
+		  	//CREAR LAS GRILLAS PARA EL ESCENARIO
+		  	var axesHelper = new THREE.AxesHelper( size );
+		  	var gridHelperXY = new THREE.GridHelper( size, divisions, color1, color1);
+		  	var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2 );
+		  	var gridHelperYZ = new THREE.GridHelper( size, divisions, color2, color2 );
+            
+            //ROTARLAS PARA QUE QUEDEN EN EL ESPACIO ADECUADO
+            gridHelperXY.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+            gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+            gridHelperYZ.rotateOnWorldAxis ( z, THREE.Math.degToRad(90) );
+            
+            //CREAR LAS FLECHAS QUE INDICAN LOS EJES DE COORDENADAS 3D
+            var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );
+            var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+            var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
+            
+            var curve1 = new THREE.CubicBezierCurve(
+				new THREE.Vector2( -0.012, 1.402 ),
+				new THREE.Vector2( 0, 1.302 ),
+				new THREE.Vector2( -0.072, 1.302 ),
+				new THREE.Vector2( 0, 1.202 )
+			);
+			
+			var points1 = curve1.getPoints( 50 );
+			
+			var geometry = new THREE.LatheGeometry(points1);
+			var material = new THREE.MeshBasicMaterial({color: 0xc60404});
+			geometry.scale(5,5,5);
+			geometry.translate(0.25,-6,0.75);
+
+			var curve2 = new THREE.SplineCurve( [
+				new THREE.Vector2( 0.5, -1 ),
+				new THREE.Vector2( 0.3, -0.5 ),
+				new THREE.Vector2( 0.8, 0 ),
+				new THREE.Vector2( 0.5, 0.5 ),
+				new THREE.Vector2( 0, 0.7 )
+				] );
+
+			var points2 = curve2.getPoints( 50 );
+			var geometry2 = new THREE.LatheGeometry(points2);
+			var material2 = new THREE.MeshBasicMaterial( { color : 0x3a130c });
+			geometry2.translate(0,1,0);
+
+
+			var geometry3 = new THREE.SphereGeometry( 0.3, 32, 32 );
+			var material3 = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+			
+			var geometry4 = new THREE.SphereGeometry( 0.1, 32, 32 );
+			var material4 = new THREE.MeshBasicMaterial( {color: 0x000000} );
+			
+			var curve3 = new THREE.CubicBezierCurve3(
+				new THREE.Vector3( 0.3, 0.8, 0 ),
+				new THREE.Vector3( 0.3, 0.8, 0 ),
+				new THREE.Vector3( 0.2, 1.2, 0 ),
+				new THREE.Vector3( 0, 1.2, 0 )
+				);
+			var points3 =curve3.getPoints(50);
+			var geometry6=new THREE.BoxGeometry(1,1,1);
+
+			var geometry5 = new THREE.LatheGeometry( points3 );
+			//geometry5.translate(0,2,2);
+
+			var material5 = new THREE.MeshBasicMaterial( { color : 0xe6de05 } );
+
+			
+			// Create the final object to add to the scene
+			//var curveO = new THREE.Line( geometry, material );
+
+            var lathe= new THREE.Mesh(geometry, material);
+            var splineObject = new THREE.Mesh( geometry2, material2 );
+		  	var sphere1 = new THREE.Mesh( geometry3, material3 );
+		  	var sphere2 = new THREE.Mesh( geometry3, material3 );
+		  	var sphere3 = new THREE.Mesh( geometry4, material4 );
+		  	var sphere4 = new THREE.Mesh( geometry4, material4 );
+		  	var curveObject = new THREE.Mesh( geometry5, material5 );
+		  	var cube=new THREE.Mesh(geometry6,material5);
+		  	cube.translateOnAxis(y,1);
+		  	cube.translateOnAxis(z,0.5);
+
+		  	var boxCSG = THREE.CSG.fromMesh( cube );
+			var curveObjectCSG = THREE.CSG.fromMesh( curveObject );
+
+			var result = curveObjectCSG.intersect( boxCSG );
+			curveObject = THREE.CSG.toMesh( result );
+
+
+		  	curveObject.rotateX(3.1416/2);
+		  	curveObject.rotateY(3.1416);
+		  	curveObject.translateOnAxis(y,-.1);
+ 			curveObject.translateOnAxis(z,1.0);
+ 			curveObject.material.color.set(0xe6de05);
+ 			
+
+		  	sphere1.translateOnAxis(x,0.3);
+		  	sphere1.translateOnAxis(y,1.3);
+ 			sphere1.translateOnAxis(z,0.5);
+		  	
+		  	sphere2.translateOnAxis(x,-0.3);
+		  	sphere2.translateOnAxis(y,1.3);
+ 			sphere2.translateOnAxis(z,0.5);
+
+ 			sphere3.translateOnAxis(x,0.45);
+		  	sphere3.translateOnAxis(y,1.35);
+ 			sphere3.translateOnAxis(z,0.65);
+
+ 			sphere4.translateOnAxis(x,-0.45);
+		  	sphere4.translateOnAxis(y,1.35);
+ 			sphere4.translateOnAxis(z,0.65);
+
+		  	//AGREGAR A LA ESCENA
+            scene.add( gridHelperXZ );
+		  	scene.add( arrowX );	
+		  	scene.add( arrowY );	
+		  	scene.add( arrowZ );
+		  	scene.add( lathe );
+		  	scene.add(splineObject);
+		  	scene.add( sphere1 );
+		  	scene.add( sphere2 );
+		  	scene.add( sphere3 );
+		  	scene.add( sphere4 );
+		  	scene.add( curveObject );
+		  	//scene.add( cube );
+            
+    
+
+			//MOVER LA CÁMARA
+			camera.position.x = 10;
+			camera.position.y = 10;	 
+		  	camera.position.z = 10;			
+		  	camera.lookAt( origin );
+			}
+    
+    function animate() {
+        requestAnimationFrame( animate );
+        controls.update();
+        render();
+    }
+    
+    function render(){
+        renderer.render( scene, camera );
+    }
+    </script>
+  </body>
+</html>
